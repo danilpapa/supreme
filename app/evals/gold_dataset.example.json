@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://example.com/python-testing",
+    "expected_topic": "programming",
+    "should_create_new_topic": false
+  },
+  {
+    "url": "https://example.com/omelette",
+    "expected_topic": "cooking",
+    "should_create_new_topic": false
+  },
+  {
+    "url": "https://example.com/quantum-chemistry",
+    "expected_topic": "quantum chemistry",
+    "should_create_new_topic": true
+  }
+]
