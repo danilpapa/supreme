@@ -17,6 +17,15 @@ class Settings(BaseSettings):
     chroma_topics_collection: str = "topics"
     chroma_articles_collection: str = "articles"
     request_timeout_seconds: float = 25.0
+    parser_timeout_seconds: float = 40.0
+    embedding_timeout_seconds: float = 120.0
+    chat_timeout_seconds: float = 90.0
+    embedding_max_chars: int = 12000
+    parser_fallback_base_url: str = "https://r.jina.ai/"
+    parser_user_agent: str = (
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

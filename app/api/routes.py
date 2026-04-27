@@ -1,6 +1,7 @@
 from functools import lru_cache
 
-from fastapi import APIRouter
+import httpx
+from fastapi import APIRouter, HTTPException
 
 from app.agents.embedder import EmbedderAgent
 from app.agents.orchestrator import Orchestrator
@@ -44,7 +45,20 @@ async def list_topics() -> list[TopicRecord]:
 
 @router.post("/agent/classify", response_model=ClassificationResponse)
 async def classify_article(payload: ClassificationRequest) -> ClassificationResponse:
-    return await get_orchestrator().classify_url(str(payload.url))
+    try:
+        return await get_orchestrator().classify_url(str(payload.url))
+    except httpx.TimeoutException as exc:
+        raise HTTPException(status_code=504, detail="Timeout while fetching or processing URL content.") from exc
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Target URL returned HTTP {exc.response.status_code}.",
+        ) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(status_code=502, detail=f"Failed to fetch target URL: {exc!s}") from exc
+    except RuntimeError as exc:
+        # Raised by Ollama client with a user-friendly message.
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
 
 
 @router.get("/articles", response_model=list[ArticleRecord])
